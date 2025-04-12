@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cxwcusr1xcuau"
+path="res://.godot/imported/6.ogg-dec5b9a3dbb7e2bd732995563b87dddd.oggvorbisstr"
+
+[deps]
+
+source_file="res://MISC/car swapper/cars/Saipa Pride/engine sounds/6.ogg"
+dest_files=["res://.godot/imported/6.ogg-dec5b9a3dbb7e2bd732995563b87dddd.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

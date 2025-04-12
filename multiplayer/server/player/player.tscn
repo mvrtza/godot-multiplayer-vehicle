@@ -1,0 +1,51 @@
+[gd_scene load_steps=6 format=3 uid="uid://d22ui7edtme5r"]
+
+[ext_resource type="Script" path="res://multiplayer/server/player/player.gd" id="1_yitlb"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g1lv2"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ocvdk"]
+radius = 12.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o02sh"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_f15ps"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="Player" type="Node3D"]
+script = ExtResource("1_yitlb")
+
+[node name="ServerArea" type="Area3D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ServerArea"]
+shape = SubResource("SphereShape3D_g1lv2")
+
+[node name="ClientVisibility" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ClientVisibility"]
+shape = SubResource("SphereShape3D_ocvdk")
+
+[node name="ClientSync" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_o02sh")
+public_visibility = false
+
+[node name="ServerSync" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_f15ps")
+public_visibility = false
+
+[connection signal="area_entered" from="ServerArea" to="." method="_on_server_area_area_entered"]
+[connection signal="area_exited" from="ServerArea" to="." method="_on_server_area_area_exited"]
