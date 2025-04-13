@@ -36,7 +36,7 @@ func load_and_cache(path):
 	loaded = literal_cache[path]
 	return loaded
 
-@onready var default_position = get_parent().get_parent().get_node("car").global_position
+@onready var default_position = get_parent().get_parent().get_parent().global_position
 
 func swapcar(naem):
 	visible = false
