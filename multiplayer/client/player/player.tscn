@@ -40,7 +40,4 @@ near = 0.1
 far = 10000.0
 
 [node name="car" parent="." instance=ExtResource("4_m6byx")]
-EngineFriction = 10000.0
 BuildUpTorque = 0.004
-VVT_DeclineRPM = 3000.0
-MaxPSI = 3.0

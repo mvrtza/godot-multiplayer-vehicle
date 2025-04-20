@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://multiplayer/server/player/player.gd" id="1_yitlb"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_g1lv2"]
-radius = 11.0
+radius = 400.0
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ocvdk"]
-radius = 12.0
+radius = 500.0
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_o02sh"]
 properties/0/path = NodePath(".:position")

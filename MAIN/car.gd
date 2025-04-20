@@ -1,6 +1,8 @@
 extends RigidBody3D
-
-
+@export var stop_car = false
+@export var avaliable_gas = 10.0
+@export var maximum_gas = 30.0
+@export var distance_traveled = 0
 @export var Debug_Mode :bool = false
 @export var replicated_position : Vector3
 @export var replicated_rotation : Vector3
@@ -208,7 +210,7 @@ false, # enabled
 @export var SCRPMInfluence = 1.0
 @export var BlowRate = 35.0
 @export var SCThreshold = 6.0
-
+@export var carskinname = 0
 var rpm = 0.0
 var rpmspeed = 0.0
 var resistancerpm = 0.0
@@ -927,175 +929,188 @@ func aero():
 		
 
 func _physics_process(delta):
-	if len(steering_angles)>0:
-		max_steering_angle = 0.0
-		for i in steering_angles:
-			max_steering_angle = maxf(max_steering_angle,i)
+	if(avaliable_gas>0 && !stop_car):
+		var sync_client_node = get_parent().get_node_or_null('ClientSync')
+		var last_distance = position
+		await get_tree().create_timer(1.0).timeout 
+		var now_distance = position
+		distance_traveled = distance_traveled + last_distance.distance_to(now_distance)*0.000001
+		avaliable_gas = avaliable_gas - last_distance.distance_to(now_distance)*0.000001
+		if $detect_ground.is_colliding():
+			var ground = $detect_ground.get_collider()
+			await get_tree().create_timer(5.0).timeout 
+			if($detect_ground.is_colliding() && ground == $detect_ground.get_collider()):
+				rotation = Vector3(rotation.x,rotation.y,0)
+		if sync_client_node:
+			if len(steering_angles)>0:
+				max_steering_angle = 0.0
+				for i in steering_angles:
+					max_steering_angle = maxf(max_steering_angle,i)
+					
+				assistance_factor = 90.0/max_steering_angle
+			steering_angles = []
 			
-		assistance_factor = 90.0/max_steering_angle
-	steering_angles = []
-	
-	if Use_Global_Control_Settings:
-		UseMouseSteering = VitaVehicleSimulation.UseMouseSteering
-		UseAccelerometreSteering = VitaVehicleSimulation.UseAccelerometreSteering
-		SteerSensitivity = VitaVehicleSimulation.SteerAmountDecay
-		KeyboardSteerSpeed = VitaVehicleSimulation.KeyboardSteerSpeed
-		KeyboardReturnSpeed = VitaVehicleSimulation.KeyboardReturnSpeed
-		KeyboardCompensateSpeed = VitaVehicleSimulation.KeyboardCompensateSpeed
+			if Use_Global_Control_Settings:
+				UseMouseSteering = VitaVehicleSimulation.UseMouseSteering
+				UseAccelerometreSteering = VitaVehicleSimulation.UseAccelerometreSteering
+				SteerSensitivity = VitaVehicleSimulation.SteerAmountDecay
+				KeyboardSteerSpeed = VitaVehicleSimulation.KeyboardSteerSpeed
+				KeyboardReturnSpeed = VitaVehicleSimulation.KeyboardReturnSpeed
+				KeyboardCompensateSpeed = VitaVehicleSimulation.KeyboardCompensateSpeed
 
-		SteerAmountDecay = VitaVehicleSimulation.SteerAmountDecay
-		SteeringAssistance = VitaVehicleSimulation.SteeringAssistance
-		SteeringAssistanceAngular = VitaVehicleSimulation.SteeringAssistanceAngular
-		
-		GearAssistant[1] = VitaVehicleSimulation.GearAssistant
+				SteerAmountDecay = VitaVehicleSimulation.SteerAmountDecay
+				SteeringAssistance = VitaVehicleSimulation.SteeringAssistance
+				SteeringAssistanceAngular = VitaVehicleSimulation.SteeringAssistanceAngular
+				
+				GearAssistant[1] = VitaVehicleSimulation.GearAssistant
 
-	
-	if Input.is_action_just_pressed("toggle_debug_mode"):
-		if Debug_Mode:
-			Debug_Mode = false
-		else:
-			Debug_Mode = true
-	
-#	velocity = global_transform.basis.orthonormalized().xform_inv(linear_velocity)
-	velocity = global_transform.basis.orthonormalized().transposed() * (linear_velocity)
-#	rvelocity = global_transform.basis.orthonormalized().xform_inv(angular_velocity)
-	rvelocity = global_transform.basis.orthonormalized().transposed() * (angular_velocity)
-
-	if not mass == Weight/10.0:
-		mass = Weight/10.0
-	aero()
-	
-	gforce = (linear_velocity - pastvelocity)*((0.30592/9.806)*60.0)
-	pastvelocity = linear_velocity
-	
-#	gforce = global_transform.basis.orthonormalized().xform_inv(gforce)
-	gforce = global_transform.basis.orthonormalized().transposed() * (gforce)
-	
-	controls()
-
-	ratio = 10.0
-
-	sassistdel -= 1
-
-	transmission()
-	
-	limits()
-
-	var steeroutput = steer
-	
-	var uhh = (max_steering_angle/90.0)*(max_steering_angle/90.0)
-	uhh *= 0.5	
-	steeroutput *= abs(steer)*(uhh) +(1.0-uhh)
-	
-	if abs(steeroutput)>0.0:
-		steering_geometry = [-Steer_Radius/steeroutput,AckermannPoint]
-
-
-	abspump -= 1    
-	
-	if abspump<0:
-		brake_allowed += ABS[4]
-	else:
-		brake_allowed -= ABS[4]
-		
-	if brake_allowed<0.0:
-		brake_allowed = 0.0
-	elif brake_allowed>1.0:
-		brake_allowed = 1.0
-	
-	brakeline = brakepedal*brake_allowed
-	
-	if brakeline<0.0:
-		brakeline = 0.0
-	
-	limdel -= 1
-	
-	if limdel<0:
-		throttle -= (throttle - (gaspedal/(tcsweight*clutchpedal +1.0)))*(ThrottleResponse/clock_mult)
-	else:
-		throttle -= throttle*(ThrottleResponse/clock_mult)
-
-	if rpm>RPMLimit:
-		if throttle>ThrottleLimit:
-			throttle = ThrottleLimit
-			limdel = LimiterDelay
-	elif rpm<IdleRPM:
-		if throttle<ThrottleIdle:
-			throttle = ThrottleIdle
-
-
-	var stab = 300.0
-
-
-	var thr = 0.0
-
-	if TurboEnabled:
-		thr = (throttle-SpoolThreshold)/(1-SpoolThreshold)
 			
-		if boosting>thr:
-			boosting = thr
-		else:
-			boosting -= (boosting - thr)*TurboEfficiency
-		
-		turbopsi += (boosting*rpm)/((TurboSize/Compressor)*60.9)
-
-		turbopsi -= turbopsi*BlowoffRate
+			if Input.is_action_just_pressed("toggle_debug_mode"):
+				if Debug_Mode:
+					Debug_Mode = false
+				else:
+					Debug_Mode = true
 			
-		if turbopsi>MaxPSI:
-			turbopsi = MaxPSI
-			
-		if turbopsi<-TurboVacuum:
-			turbopsi = -TurboVacuum
-	elif SuperchargerEnabled:
-		scrpm = rpm*SCRPMInfluence
-		turbopsi = (scrpm/10000.0)*BlowRate -SCThreshold
-		if turbopsi>MaxPSI:
-			turbopsi = MaxPSI
-		if turbopsi<0.0:
-			turbopsi = 0.0
-	else:
-		turbopsi = 0.0
+		#	velocity = global_transform.basis.orthonormalized().xform_inv(linear_velocity)
+			velocity = global_transform.basis.orthonormalized().transposed() * (linear_velocity)
+		#	rvelocity = global_transform.basis.orthonormalized().xform_inv(angular_velocity)
+			rvelocity = global_transform.basis.orthonormalized().transposed() * (angular_velocity)
 
-	vvt = rpm>VVTRPM
-	
-	var torque = 0.0
-	
-		
-	if vvt:
-		var f = rpm-VVT_RiseRPM
-		if f<0.0:
-			f = 0.0
-		torque = (rpm*VVT_BuildUpTorque +VVT_OffsetTorque + (f*f)*(VVT_TorqueRise/10000000.0))*throttle
-		torque += ( (turbopsi*TurboAmount) * (EngineCompressionRatio*0.609) )
-		var j = rpm-VVT_DeclineRPM
-		if j<0.0:
-			j = 0.0
-		torque /= (j*(j*VVT_DeclineSharpness +(1.0-VVT_DeclineSharpness)))*(VVT_DeclineRate/10000000.0) +1.0
-		torque /= abs(rpm*abs(rpm))*(VVT_FloatRate/10000000.0) +1.0
-	else:
-		var f = rpm-RiseRPM
-		if f<0.0:
-			f = 0.0
-		torque = (rpm*BuildUpTorque +OffsetTorque + (f*f)*(TorqueRise/10000000.0))*throttle
-		torque += ( (turbopsi*TurboAmount) * (EngineCompressionRatio*0.609) )
-		var j = rpm-DeclineRPM
-		if j<0.0:
-			j = 0.0
-		torque /= (j*(j*DeclineSharpness +(1.0-DeclineSharpness)))*(DeclineRate/10000000.0) +1.0
-		torque /= abs(rpm*abs(rpm))*(FloatRate/10000000.0) +1.0
-		
-	rpmforce = (rpm/(abs(rpm*abs(rpm))/(EngineFriction/clock_mult) +1.0))*1.0
-	if rpm<DeadRPM:
-		torque = 0.0
-		rpmforce /= 5.0
-		stalled = 1.0 -rpm/DeadRPM
-	else:
-		stalled = 0.0
-	rpmforce += (rpm*(EngineDrag/clock_mult))*1.0
-	rpmforce -= (torque/clock_mult)*1.0
-	rpm -= rpmforce*RevSpeed
-		
-	drivetrain()
+			if not mass == Weight/10.0:
+				mass = Weight/10.0
+			aero()
+			
+			gforce = (linear_velocity - pastvelocity)*((0.30592/9.806)*60.0)
+			pastvelocity = linear_velocity
+			
+		#	gforce = global_transform.basis.orthonormalized().xform_inv(gforce)
+			gforce = global_transform.basis.orthonormalized().transposed() * (gforce)
+			
+			controls()
+
+			ratio = 10.0
+
+			sassistdel -= 1
+
+			transmission()
+			
+			limits()
+
+			var steeroutput = steer
+			
+			var uhh = (max_steering_angle/90.0)*(max_steering_angle/90.0)
+			uhh *= 0.5	
+			steeroutput *= abs(steer)*(uhh) +(1.0-uhh)
+			
+			if abs(steeroutput)>0.0:
+				steering_geometry = [-Steer_Radius/steeroutput,AckermannPoint]
+
+
+			abspump -= 1    
+			
+			if abspump<0:
+				brake_allowed += ABS[4]
+			else:
+				brake_allowed -= ABS[4]
+				
+			if brake_allowed<0.0:
+				brake_allowed = 0.0
+			elif brake_allowed>1.0:
+				brake_allowed = 1.0
+			
+			brakeline = brakepedal*brake_allowed
+			
+			if brakeline<0.0:
+				brakeline = 0.0
+			
+			limdel -= 1
+			
+			if limdel<0:
+				throttle -= (throttle - (gaspedal/(tcsweight*clutchpedal +1.0)))*(ThrottleResponse/clock_mult)
+			else:
+				throttle -= throttle*(ThrottleResponse/clock_mult)
+
+			if rpm>RPMLimit:
+				if throttle>ThrottleLimit:
+					throttle = ThrottleLimit
+					limdel = LimiterDelay
+			elif rpm<IdleRPM:
+				if throttle<ThrottleIdle:
+					throttle = ThrottleIdle
+
+
+			var stab = 300.0
+
+
+			var thr = 0.0
+
+			if TurboEnabled:
+				thr = (throttle-SpoolThreshold)/(1-SpoolThreshold)
+					
+				if boosting>thr:
+					boosting = thr
+				else:
+					boosting -= (boosting - thr)*TurboEfficiency
+				
+				turbopsi += (boosting*rpm)/((TurboSize/Compressor)*60.9)
+
+				turbopsi -= turbopsi*BlowoffRate
+					
+				if turbopsi>MaxPSI:
+					turbopsi = MaxPSI
+					
+				if turbopsi<-TurboVacuum:
+					turbopsi = -TurboVacuum
+			elif SuperchargerEnabled:
+				scrpm = rpm*SCRPMInfluence
+				turbopsi = (scrpm/10000.0)*BlowRate -SCThreshold
+				if turbopsi>MaxPSI:
+					turbopsi = MaxPSI
+				if turbopsi<0.0:
+					turbopsi = 0.0
+			else:
+				turbopsi = 0.0
+
+			vvt = rpm>VVTRPM
+			
+			var torque = 0.0
+			
+				
+			if vvt:
+				var f = rpm-VVT_RiseRPM
+				if f<0.0:
+					f = 0.0
+				torque = (rpm*VVT_BuildUpTorque +VVT_OffsetTorque + (f*f)*(VVT_TorqueRise/10000000.0))*throttle
+				torque += ( (turbopsi*TurboAmount) * (EngineCompressionRatio*0.609) )
+				var j = rpm-VVT_DeclineRPM
+				if j<0.0:
+					j = 0.0
+				torque /= (j*(j*VVT_DeclineSharpness +(1.0-VVT_DeclineSharpness)))*(VVT_DeclineRate/10000000.0) +1.0
+				torque /= abs(rpm*abs(rpm))*(VVT_FloatRate/10000000.0) +1.0
+			else:
+				var f = rpm-RiseRPM
+				if f<0.0:
+					f = 0.0
+				torque = (rpm*BuildUpTorque +OffsetTorque + (f*f)*(TorqueRise/10000000.0))*throttle
+				torque += ( (turbopsi*TurboAmount) * (EngineCompressionRatio*0.609) )
+				var j = rpm-DeclineRPM
+				if j<0.0:
+					j = 0.0
+				torque /= (j*(j*DeclineSharpness +(1.0-DeclineSharpness)))*(DeclineRate/10000000.0) +1.0
+				torque /= abs(rpm*abs(rpm))*(FloatRate/10000000.0) +1.0
+				
+			rpmforce = (rpm/(abs(rpm*abs(rpm))/(EngineFriction/clock_mult) +1.0))*1.0
+			if rpm<DeadRPM:
+				torque = 0.0
+				rpmforce /= 5.0
+				stalled = 1.0 -rpm/DeadRPM
+			else:
+				stalled = 0.0
+			rpmforce += (rpm*(EngineDrag/clock_mult))*1.0
+			rpmforce -= (torque/clock_mult)*1.0
+			rpm -= rpmforce*RevSpeed
+				
+			drivetrain()
 
 var front_wheels = []
 var rear_wheels = []
@@ -1128,8 +1143,9 @@ func _process(delta):
 		if total>0:
 			weight_dist[0] = (front_load/total)*0.5 +0.5
 			weight_dist[1] = 1.0-weight_dist[0]
-	
-	readout_torque = VitaVehicleSimulation.multivariate(RiseRPM,TorqueRise,BuildUpTorque,EngineFriction,EngineDrag,OffsetTorque,rpm,DeclineRPM,DeclineRate,FloatRate,MaxPSI,TurboAmount,EngineCompressionRatio,TurboEnabled,VVTRPM,VVT_BuildUpTorque,VVT_TorqueRise,VVT_RiseRPM,VVT_OffsetTorque,VVT_FloatRate,VVT_DeclineRPM,VVT_DeclineRate,SuperchargerEnabled,SCRPMInfluence,BlowRate,SCThreshold,DeclineSharpness,VVT_DeclineSharpness)
+	var sync_client_node = get_parent().get_node_or_null('ClientSync')
+	if sync_client_node:
+		readout_torque = VitaVehicleSimulation.multivariate(RiseRPM,TorqueRise,BuildUpTorque,EngineFriction,EngineDrag,OffsetTorque,rpm,DeclineRPM,DeclineRate,FloatRate,MaxPSI,TurboAmount,EngineCompressionRatio,TurboEnabled,VVTRPM,VVT_BuildUpTorque,VVT_TorqueRise,VVT_RiseRPM,VVT_OffsetTorque,VVT_FloatRate,VVT_DeclineRPM,VVT_DeclineRate,SuperchargerEnabled,SCRPMInfluence,BlowRate,SCThreshold,DeclineSharpness,VVT_DeclineSharpness)
 	
 func _integrate_forces(_state : PhysicsDirectBodyState3D) -> void:
 	var sync_client_node = get_parent().get_node_or_null('ClientSync')

@@ -66,7 +66,6 @@ func swapcar(naem):
 		
 		
 		get_parent().car = NodePath("../"+str(d.name))
-		
 		get_parent()._ready()
 		get_parent().get_node("controls manipulator").setcar()
 		

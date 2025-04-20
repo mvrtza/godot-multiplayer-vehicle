@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://b77dj0608nvq0"]
+[gd_scene load_steps=19 format=3 uid="uid://b77dj0608nvq0"]
 
 [ext_resource type="Texture2D" uid="uid://b315i7ikjj32c" path="res://logo.png" id="2"]
 [ext_resource type="Script" path="res://MISC/misc scripts/debug.gd" id="3"]
@@ -16,6 +16,12 @@
 [ext_resource type="PackedScene" path="res://MISC/vertical progress bar/bar.tscn" id="14"]
 [ext_resource type="PackedScene" uid="uid://cnjbclsh2lklc" path="res://MISC/visual gravity system/vgs.tscn" id="15"]
 [ext_resource type="PackedScene" uid="uid://2ojbutsqhnh4" path="res://MISC/graph/display.tscn" id="16"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dl67w"]
+bg_color = Color(0.14902, 0.14902, 0.14902, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gcllm"]
+bg_color = Color(0.14902, 0.14902, 0.14902, 1)
 
 [node name="debug" type="Control"]
 layout_mode = 3
@@ -1151,6 +1157,27 @@ anchor_left = 0.74707
 anchor_right = 0.844727
 anchor_bottom = 0.08
 text = "swap car"
+
+[node name="distance" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -49.0
+offset_right = 40.0
+offset_bottom = -26.0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_dl67w")
+
+[node name="gas" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 40.0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_gcllm")
 
 [node name="swap map" type="Button" parent="."]
 layout_mode = 0

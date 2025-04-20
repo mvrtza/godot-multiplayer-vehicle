@@ -18,10 +18,13 @@ func _ready():
 
 
 func _process(delta):
+	
 	VitaVehicleSimulation.misc_smoke = misc_graphics_settings.smoke
 	if delta>0:
 		get_node("container/fps").text = "fps: "+str(1.0/delta)
 		if has_node(car):
+			$gas.text = "GAS:" + str(round(get_node(car).avaliable_gas)) + " / " + str(get_node(car).maximum_gas)
+			$distance.text = "TRAVELED DISTANCE:"+str(round(get_node(car).distance_traveled*5))+"KM"
 			$sw.rotation_degrees = get_node(car).steer*380.0
 			$sw_desired.rotation_degrees = get_node(car).steer2*380.0
 			if get_node(car).Debug_Mode:
