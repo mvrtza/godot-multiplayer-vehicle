@@ -56,6 +56,28 @@ func _physics_process(delta):
 	resetdel -= 1
 		
 func _input(event):
+	if event.is_action_pressed("slow_motion"):
+		var tween = create_tween()
+		if(Engine.time_scale == 0.5):
+			
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_radius', 0, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_amount', 0, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/levels', 3, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/spread', 0.01, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_inner', 0.5, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_outer', 1, 0.25)
+			await tween.finished
+			Engine.time_scale = 1.0
+		elif(Engine.time_scale == 1.0):
+			
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_radius', 0.5, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_amount', 0.5, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/levels', 6, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/spread', 0.03, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_inner', 0.5, 0.25)
+			tween.parallel().tween_property($orbit/Camera/blur, 'material:shader_parameter/blur_outer', 1, 0.25)
+			await tween.finished
+			Engine.time_scale = 0.5
 	if not str(mobile_controls) == "":
 		if get_node(mobile_controls).visible:
 			can_drag = true

@@ -283,6 +283,7 @@ var stress = 0.0
 var su = false
 var sd = false
 var gas = false
+var horn = false
 var brake = false
 var handbrake = false
 var right = false
@@ -311,7 +312,9 @@ func _ready():
 		c_pws.append(wh)
 		
 
+
 func controls():
+
 	var mouseposx = 0.0
 	
 	if get_viewport().size.x>0.0:
@@ -324,6 +327,7 @@ func controls():
 		sd = Input.is_action_just_pressed("shiftdown_mouse")
 		handbrake = Input.is_action_pressed("handbrake_mouse")
 	else:
+		horn = Input.is_action_just_pressed("horn")
 		gas = Input.is_action_pressed("gas")
 		brake = Input.is_action_pressed("brake")
 		su = Input.is_action_just_pressed("shiftup")

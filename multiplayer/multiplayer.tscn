@@ -9,8 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://diafjore21wn" path="res://MISC/scene swapper/scenes/Test Scene/scene.tscn" id="8_fr8gf"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uv5kl"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+sky_top_color = Color(0, 0.447059, 0.823529, 1)
+sky_horizon_color = Color(0.501961, 0.682353, 0.788235, 1)
+ground_bottom_color = Color(0.286275, 0.419608, 0.611765, 1)
+ground_horizon_color = Color(0.521569, 0.678431, 0.784314, 1)
 
 [sub_resource type="Sky" id="Sky_xu5cm"]
 sky_material = SubResource("ProceduralSkyMaterial_uv5kl")
@@ -18,7 +20,9 @@ sky_material = SubResource("ProceduralSkyMaterial_uv5kl")
 [sub_resource type="Environment" id="Environment_f5pef"]
 background_mode = 2
 sky = SubResource("Sky_xu5cm")
-tonemap_mode = 2
+tonemap_exposure = 0.83
+tonemap_white = 1.84
+fog_enabled = true
 
 [sub_resource type="GDScript" id="GDScript_mu6fd"]
 script/source = "extends Control
@@ -55,6 +59,8 @@ func set_multiplayer_mode(server_running: bool) -> void:
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+light_color = Color(0.866667, 0.678431, 0.368627, 1)
+light_energy = 6.778
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

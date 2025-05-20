@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://del2h14nydk3g" path="res://MAIN/misc/textures/rim.jpg" id="4"]
 [ext_resource type="ArrayMesh" uid="uid://c0wc51xdmty5y" path="res://Cars/Mesh/base car.tres" id="4_u6lta"]
 [ext_resource type="PackedScene" uid="uid://d1vmrvs3aj84o" path="res://MAIN/misc/tyre sounds/tyres.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://MAIN/misc/mechanical sounds/other_sounds.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://ttq3ke5webf7" path="res://MAIN/misc/mechanical sounds/other_sounds.tscn" id="6"]
 [ext_resource type="PackedScene" uid="uid://kb7hq7qvuul3" path="res://MAIN/misc/backfire_particles/fire.tscn" id="7"]
 [ext_resource type="Texture2D" uid="uid://1a0k3s3amej8" path="res://MAIN/misc/backfire_particles/backfire.png" id="8_tk2wk"]
 

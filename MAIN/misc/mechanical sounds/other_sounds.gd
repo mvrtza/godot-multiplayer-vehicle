@@ -59,6 +59,8 @@ func _ready():
 	play()
 
 func _physics_process(delta):
+	if(get_parent().horn):
+		$horn.play()
 	fueltrace += (get_parent().throttle)*backfire_FuelRichness
 	air = (get_parent().throttle*get_parent().rpm)*backfire_Air +get_parent().turbopsi
 
