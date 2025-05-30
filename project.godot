@@ -21,11 +21,15 @@ config/icon="res://icon.png"
 VitaVehicleSimulation="*res://MAIN/vitavehicle.gd"
 misc_graphics_settings="*res://MISC/autoload/graphics.gd"
 
+[debug]
+
+settings/stdout/print_fps=true
+
 [display]
 
-window/size/viewport_width=1024
-window/size/viewport_height=600
+window/dpi/allow_hidpi=false
 window/vsync/use_vsync=false
+window/stdout/print_fps=true
 
 [dotnet]
 
@@ -212,15 +216,27 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
+occlusion_culling/bvh_build_quality=0
+textures/canvas_textures/default_texture_filter=0
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
 textures/lossless_compression/force_png=true
+camera/depth_of_field/depth_of_field_bokeh_shape=0
+environment/ssao/quality=0
+environment/ssil/quality=0
+anti_aliasing/screen_space_roughness_limiter/enabled=false
+scaling_3d/mode=1
+scaling_3d/scale=0.25
+scaling_3d/fsr_sharpness=0.0
+environment/glow/upscale_mode=0
+global_illumination/sdfgi/frames_to_converge=0
+environment/volumetric_fog/use_filter=0
+2d/sdf/scale=2
 environment/defaults/default_environment="res://default_env.tres"
 quality/driver/driver_name="GLES2"
 quality/intended_usage/framebuffer_allocation.mobile=2
 threads/thread_model=2
 vram_compression/import_etc=true
-quality/shadows/filter_mode=2
-quality/shadows/filter_mode.mobile=2
 quality/reflections/irradiance_max_size=32
 quality/shading/force_vertex_shading.mobile=false
 quality/shading/force_lambert_over_burley.mobile=false

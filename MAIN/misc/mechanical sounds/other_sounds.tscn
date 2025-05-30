@@ -10,6 +10,8 @@
 
 [node name="other_sounds" type="Node3D"]
 script = ExtResource("5")
+WhinePitch = 10
+WhineVolume = 0.1
 
 [node name="horn" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("2_a4ymd")

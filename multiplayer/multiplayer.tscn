@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b7f55o70s0e4c"]
+[gd_scene load_steps=22 format=3 uid="uid://b7f55o70s0e4c"]
 
 [ext_resource type="Script" path="res://multiplayer/server/players.gd" id="1_7ntly"]
 [ext_resource type="Script" path="res://multiplayer/server/server.gd" id="1_ccl0h"]
@@ -6,23 +6,20 @@
 [ext_resource type="Script" path="res://multiplayer/client/client.gd" id="3_hmc42"]
 [ext_resource type="Script" path="res://multiplayer/client/players.gd" id="4_w344d"]
 [ext_resource type="PackedScene" uid="uid://cj15gso30kwjp" path="res://multiplayer/client/player/player.tscn" id="6_gwg1s"]
-[ext_resource type="PackedScene" uid="uid://diafjore21wn" path="res://MISC/scene swapper/scenes/Test Scene/scene.tscn" id="8_fr8gf"]
+[ext_resource type="PackedScene" uid="uid://bidgtgjpxgsgb" path="res://MISC/scene swapper/scenes/RCP Proving Grounds/scene.tscn" id="8_f8vvx"]
+[ext_resource type="Script" path="res://multiplayer/FPS.gd" id="8_fnrjl"]
+[ext_resource type="Script" path="res://multiplayer/resoultion.gd" id="9_81jtn"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_uv5kl"]
-sky_top_color = Color(0, 0.447059, 0.823529, 1)
-sky_horizon_color = Color(0.501961, 0.682353, 0.788235, 1)
-ground_bottom_color = Color(0.286275, 0.419608, 0.611765, 1)
-ground_horizon_color = Color(0.521569, 0.678431, 0.784314, 1)
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fbne0"]
 
 [sub_resource type="Sky" id="Sky_xu5cm"]
-sky_material = SubResource("ProceduralSkyMaterial_uv5kl")
+sky_material = SubResource("ProceduralSkyMaterial_fbne0")
 
 [sub_resource type="Environment" id="Environment_f5pef"]
 background_mode = 2
 sky = SubResource("Sky_xu5cm")
 tonemap_exposure = 0.83
 tonemap_white = 1.84
-fog_enabled = true
 
 [sub_resource type="GDScript" id="GDScript_mu6fd"]
 script/source = "extends Control
@@ -55,13 +52,63 @@ func set_multiplayer_mode(server_running: bool) -> void:
 
 [sub_resource type="World3D" id="World3D_wpr7t"]
 
+[sub_resource type="Gradient" id="Gradient_yymqw"]
+offsets = PackedFloat32Array(0, 0.282158, 0.53112, 0.751037, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1, 0.458824, 0.458824, 0.458824, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pxwtc"]
+gradient = SubResource("Gradient_yymqw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_al0fd"]
+lifetime_randomness = 0.5
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(1, -1, 0)
+initial_velocity_min = 0.01
+initial_velocity_max = 0.02
+gravity = Vector3(0, -0.04, 0)
+scale_min = 0.1
+scale_max = 0.15
+color_ramp = SubResource("GradientTexture1D_pxwtc")
+
+[sub_resource type="Gradient" id="Gradient_j756l"]
+colors = PackedColorArray(0.537255, 0.537255, 0.537255, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_obn8g"]
+gradient = SubResource("Gradient_j756l")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+metadata/_snap_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o1pms"]
+transparency = 1
+disable_ambient_light = true
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_obn8g")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+distance_fade_mode = 1
+distance_fade_min_distance = 0.5
+distance_fade_max_distance = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_sj6ak"]
+material = SubResource("StandardMaterial3D_o1pms")
+size = Vector2(0.05, 0.05)
+
 [node name="Main" type="Node"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
-light_color = Color(0.866667, 0.678431, 0.368627, 1)
-light_energy = 6.778
-shadow_enabled = true
+light_color = Color(0.458824, 0.572549, 0.6, 1)
+light_energy = 6.155
+light_indirect_energy = 3.494
+light_volumetric_fog_energy = 0.0
+directional_shadow_mode = 0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_f5pef")
@@ -124,6 +171,7 @@ offset_bottom = 40.0
 [node name="SubViewport" type="SubViewport" parent="."]
 own_world_3d = true
 world_3d = SubResource("World3D_wpr7t")
+fsr_sharpness = 0.0
 
 [node name="Server" type="Node" parent="SubViewport"]
 script = ExtResource("1_ccl0h")
@@ -147,7 +195,75 @@ local_player_scene = ExtResource("6_gwg1s")
 _spawnable_scenes = PackedStringArray("res://multiplayer/client/puppet_player/puppet_player.tscn")
 spawn_path = NodePath("..")
 
-[node name="test scene" parent="Client" instance=ExtResource("8_fr8gf")]
+[node name="CPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.42117, -1.50648)
+visible = false
+amount = 1280
+lifetime = 7.0
+preprocess = 10.0
+speed_scale = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_al0fd")
+draw_pass_1 = SubResource("QuadMesh_sj6ak")
+
+[node name="rcp proving grounds" parent="." instance=ExtResource("8_f8vvx")]
+
+[node name="FPS" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+script = ExtResource("8_fnrjl")
+
+[node name="resoultion" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -107.0
+offset_top = -40.0
+offset_right = 107.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("9_81jtn")
+
+[node name="3D" type="HSlider" parent="resoultion"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -16.0
+offset_right = 96.0
+grow_horizontal = 2
+grow_vertical = 0
+min_value = 0.25
+max_value = 2.0
+step = 0.1
+value = 0.25
+
+[node name="sharpness" type="HSlider" parent="resoultion"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -96.0
+offset_right = 96.0
+offset_bottom = 16.0
+grow_horizontal = 2
+min_value = 0.25
+max_value = 2.0
+step = 0.1
+value = 0.25
 
 [connection signal="despawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_despawned"]
 [connection signal="spawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_spawned"]
+[connection signal="value_changed" from="resoultion/3D" to="resoultion" method="_on_d_value_changed"]
+[connection signal="value_changed" from="resoultion/sharpness" to="resoultion" method="_on_sharpness_value_changed"]

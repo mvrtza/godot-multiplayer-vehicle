@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dv1yh7f558rhk"
 path.s3tc="res://.godot/imported/saipa-pride_1467724.jpg-f601a09975d2fa028c1f7270c1c333ba.s3tc.ctex"
+path.etc2="res://.godot/imported/saipa-pride_1467724.jpg-f601a09975d2fa028c1f7270c1c333ba.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={}
@@ -13,7 +14,7 @@ generator_parameters={}
 [deps]
 
 source_file="res://Cars/saipa-pride_1467724.jpg"
-dest_files=["res://.godot/imported/saipa-pride_1467724.jpg-f601a09975d2fa028c1f7270c1c333ba.s3tc.ctex"]
+dest_files=["res://.godot/imported/saipa-pride_1467724.jpg-f601a09975d2fa028c1f7270c1c333ba.s3tc.ctex", "res://.godot/imported/saipa-pride_1467724.jpg-f601a09975d2fa028c1f7270c1c333ba.etc2.ctex"]
 
 [params]
 

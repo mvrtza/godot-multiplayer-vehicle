@@ -24,6 +24,7 @@ func list_files_in_directory(path):
 
 	return files
 	
+	
 
 func load_and_cache(path):
 	var loaded = null

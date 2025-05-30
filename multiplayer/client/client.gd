@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func join() -> void:
 	var enet_multiplayer_peer = ENetMultiplayerPeer.new()
-	var check: Error = enet_multiplayer_peer.create_client("127.0.0.1", port)
+	var check: Error = enet_multiplayer_peer.create_client("192.168.43.1", port)
 	if check == OK:
 		# Allows the MultiplayerAPI to use this ENetMultiplayerPeer to send/recieve RPCs and synchronizations.
 		multiplayer.multiplayer_peer = enet_multiplayer_peer

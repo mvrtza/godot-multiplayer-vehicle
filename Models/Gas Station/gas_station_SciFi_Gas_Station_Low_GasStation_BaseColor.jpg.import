@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bto256lghsd6v"
 path.s3tc="res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg-42717a6da58e738dc7234ec0099cb4a2.s3tc.ctex"
+path.etc2="res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg-42717a6da58e738dc7234ec0099cb4a2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={}
@@ -13,7 +14,7 @@ generator_parameters={}
 [deps]
 
 source_file="res://Models/Gas Station/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg"
-dest_files=["res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg-42717a6da58e738dc7234ec0099cb4a2.s3tc.ctex"]
+dest_files=["res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg-42717a6da58e738dc7234ec0099cb4a2.s3tc.ctex", "res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_BaseColor.jpg-42717a6da58e738dc7234ec0099cb4a2.etc2.ctex"]
 
 [params]
 

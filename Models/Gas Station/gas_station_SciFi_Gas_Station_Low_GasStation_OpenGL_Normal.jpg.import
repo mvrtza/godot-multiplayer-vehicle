@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxfmnrt8nlc72"
 path.s3tc="res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg-e365c88ed7132caceb362c75bf0cd0ec.s3tc.ctex"
+path.etc2="res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg-e365c88ed7132caceb362c75bf0cd0ec.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={}
@@ -13,7 +14,7 @@ generator_parameters={}
 [deps]
 
 source_file="res://Models/Gas Station/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg"
-dest_files=["res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg-e365c88ed7132caceb362c75bf0cd0ec.s3tc.ctex"]
+dest_files=["res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg-e365c88ed7132caceb362c75bf0cd0ec.s3tc.ctex", "res://.godot/imported/gas_station_SciFi_Gas_Station_Low_GasStation_OpenGL_Normal.jpg-e365c88ed7132caceb362c75bf0cd0ec.etc2.ctex"]
 
 [params]
 
