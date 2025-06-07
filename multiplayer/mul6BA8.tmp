@@ -1,0 +1,268 @@
+[gd_scene load_steps=22 format=3 uid="uid://b7f55o70s0e4c"]
+
+[ext_resource type="Script" path="res://multiplayer/server/players.gd" id="1_7ntly"]
+[ext_resource type="Script" path="res://multiplayer/server/server.gd" id="1_ccl0h"]
+[ext_resource type="PackedScene" uid="uid://d22ui7edtme5r" path="res://multiplayer/server/player/player.tscn" id="3_h1sy0"]
+[ext_resource type="Script" path="res://multiplayer/client/client.gd" id="3_hmc42"]
+[ext_resource type="Script" path="res://multiplayer/client/players.gd" id="4_w344d"]
+[ext_resource type="PackedScene" uid="uid://cj15gso30kwjp" path="res://multiplayer/client/player/player.tscn" id="6_gwg1s"]
+[ext_resource type="PackedScene" uid="uid://bidgtgjpxgsgb" path="res://MISC/scene swapper/scenes/RCP Proving Grounds/scene.tscn" id="8_f8vvx"]
+[ext_resource type="Script" path="res://multiplayer/FPS.gd" id="8_fnrjl"]
+[ext_resource type="Script" path="res://multiplayer/resoultion.gd" id="9_81jtn"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fbne0"]
+
+[sub_resource type="Sky" id="Sky_xu5cm"]
+sky_material = SubResource("ProceduralSkyMaterial_fbne0")
+
+[sub_resource type="Environment" id="Environment_f5pef"]
+background_mode = 2
+sky = SubResource("Sky_xu5cm")
+tonemap_exposure = 0.83
+tonemap_white = 1.84
+
+[sub_resource type="GDScript" id="GDScript_mu6fd"]
+script/source = "extends Control
+
+@onready var peer_id: Label = $VBoxContainer/PeerID
+@onready var multiplayer_mode: Label = $MultiplayerMode
+@onready var visible_peers: VBoxContainer = $VisiblePeers
+
+
+func add_visible_peer(peer_name: String) -> void:
+	var label: Label = Label.new()
+	label.name = peer_name
+	label.text = peer_name
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	visible_peers.add_child(label)
+
+
+func remove_visible_peer(peer_name: String) -> void:
+	visible_peers.get_node(peer_name).queue_free()
+
+
+func set_multiplayer_mode(server_running: bool) -> void:
+	if server_running:
+		multiplayer_mode.text = \"Client + Server\"
+	else:
+		multiplayer_mode.text = \"Client\"
+
+"
+
+[sub_resource type="World3D" id="World3D_wpr7t"]
+
+[sub_resource type="Gradient" id="Gradient_yymqw"]
+offsets = PackedFloat32Array(0, 0.282158, 0.53112, 0.751037, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1, 0.458824, 0.458824, 0.458824, 0, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pxwtc"]
+gradient = SubResource("Gradient_yymqw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_al0fd"]
+lifetime_randomness = 0.5
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+direction = Vector3(1, -1, 0)
+initial_velocity_min = 0.01
+initial_velocity_max = 0.02
+gravity = Vector3(0, -0.04, 0)
+scale_min = 0.1
+scale_max = 0.15
+color_ramp = SubResource("GradientTexture1D_pxwtc")
+
+[sub_resource type="Gradient" id="Gradient_j756l"]
+colors = PackedColorArray(0.537255, 0.537255, 0.537255, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_obn8g"]
+gradient = SubResource("Gradient_j756l")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+metadata/_snap_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o1pms"]
+transparency = 1
+disable_ambient_light = true
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("GradientTexture2D_obn8g")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+distance_fade_mode = 1
+distance_fade_min_distance = 0.5
+distance_fade_max_distance = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_sj6ak"]
+material = SubResource("StandardMaterial3D_o1pms")
+size = Vector2(0.05, 0.05)
+
+[node name="Main" type="Node"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+light_color = Color(0.458824, 0.572549, 0.6, 1)
+light_energy = 6.155
+light_indirect_energy = 3.494
+light_volumetric_fog_energy = 0.0
+directional_shadow_mode = 0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_f5pef")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Control" type="Control" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Debug" type="HBoxContainer" parent="MarginContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_right = 984.0
+offset_bottom = 58.0
+grow_horizontal = 2
+script = SubResource("GDScript_mu6fd")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Control/Debug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/Control/Debug/VBoxContainer"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/Control/Debug/VBoxContainer"]
+layout_mode = 2
+
+[node name="PeerID" type="Label" parent="MarginContainer/Control/Debug/VBoxContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="MarginContainer/Control/Debug"]
+layout_mode = 2
+
+[node name="MultiplayerMode" type="Label" parent="MarginContainer/Control/Debug"]
+layout_mode = 2
+
+[node name="Control2" type="Control" parent="MarginContainer/Control/Debug"]
+layout_mode = 2
+
+[node name="VisiblePeers" type="VBoxContainer" parent="MarginContainer/Control/Debug"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/Control/Debug/VisiblePeers"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/Control/Debug/VisiblePeers"]
+layout_mode = 2
+
+[node name="Controls" type="Label" parent="MarginContainer/Control"]
+layout_mode = 2
+offset_left = 27.0
+offset_top = 17.0
+offset_right = 28.0
+offset_bottom = 40.0
+
+[node name="SubViewport" type="SubViewport" parent="."]
+own_world_3d = true
+world_3d = SubResource("World3D_wpr7t")
+
+[node name="Server" type="Node" parent="SubViewport"]
+script = ExtResource("1_ccl0h")
+
+[node name="Players" type="Node3D" parent="SubViewport/Server"]
+script = ExtResource("1_7ntly")
+server_player_scene = ExtResource("3_h1sy0")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="SubViewport/Server/Players"]
+_spawnable_scenes = PackedStringArray("res://multiplayer/server/player/player.tscn")
+spawn_path = NodePath("..")
+
+[node name="Client" type="Node" parent="."]
+script = ExtResource("3_hmc42")
+
+[node name="Players" type="Node3D" parent="Client"]
+script = ExtResource("4_w344d")
+local_player_scene = ExtResource("6_gwg1s")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="Client/Players"]
+_spawnable_scenes = PackedStringArray("res://multiplayer/client/puppet_player/puppet_player.tscn")
+spawn_path = NodePath("..")
+
+[node name="CPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.42117, -1.50648)
+visible = false
+amount = 1280
+lifetime = 7.0
+preprocess = 10.0
+speed_scale = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_al0fd")
+draw_pass_1 = SubResource("QuadMesh_sj6ak")
+
+[node name="rcp proving grounds" parent="." instance=ExtResource("8_f8vvx")]
+
+[node name="FPS" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+script = ExtResource("8_fnrjl")
+
+[node name="resoultion" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -107.0
+offset_top = -40.0
+offset_right = 107.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("9_81jtn")
+
+[node name="3D" type="HSlider" parent="resoultion"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -16.0
+offset_right = 96.0
+grow_horizontal = 2
+grow_vertical = 0
+min_value = 0.25
+max_value = 2.0
+step = 0.1
+value = 0.25
+
+[node name="sharpness" type="HSlider" parent="resoultion"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -96.0
+offset_right = 96.0
+offset_bottom = 16.0
+grow_horizontal = 2
+min_value = 0.25
+max_value = 2.0
+step = 0.1
+value = 0.25
+
+[connection signal="despawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_despawned"]
+[connection signal="spawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_spawned"]
+[connection signal="value_changed" from="resoultion/3D" to="resoultion" method="_on_d_value_changed"]
+[connection signal="value_changed" from="resoultion/sharpness" to="resoultion" method="_on_sharpness_value_changed"]

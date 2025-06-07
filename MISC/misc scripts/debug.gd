@@ -93,7 +93,7 @@ func _process(delta):
 			
 func _physics_process(delta):
 	if not str(car) == "":
-		$vgs.gforce -= ($vgs.gforce - Vector2(get_node(car).gforce.x,get_node(car).gforce.z))*0.5
+		$vgs.gforce -= ($vgs.gforce - Vector2(get_node(car).gforce.x,get_node(car).gforce.z))*0.5*delta
 		
 		$tacho/abs.visible = get_node(car).abspump>0 and get_node(car).brakepedal>0.1
 		$tacho/tcs.visible = get_node(car).tcsflash

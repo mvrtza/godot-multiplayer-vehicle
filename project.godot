@@ -13,6 +13,7 @@ config_version=5
 config/name="Godot Vehicle"
 run/main_scene="res://multiplayer/multiplayer.tscn"
 config/features=PackedStringArray("4.2")
+run/max_fps=30
 boot_splash/bg_color=Color(0.819608, 0.776471, 1, 1)
 config/icon="res://icon.png"
 
@@ -20,6 +21,7 @@ config/icon="res://icon.png"
 
 VitaVehicleSimulation="*res://MAIN/vitavehicle.gd"
 misc_graphics_settings="*res://MISC/autoload/graphics.gd"
+globalserver="*res://GlobalData/server.gd"
 
 [debug]
 
@@ -27,8 +29,10 @@ settings/stdout/print_fps=true
 
 [display]
 
+window/size/viewport_width=288
+window/size/viewport_height=162
 window/dpi/allow_hidpi=false
-window/vsync/use_vsync=false
+window/vsync/use_vsync=true
 window/stdout/print_fps=true
 
 [dotnet]
@@ -225,7 +229,6 @@ camera/depth_of_field/depth_of_field_bokeh_shape=0
 environment/ssao/quality=0
 environment/ssil/quality=0
 anti_aliasing/screen_space_roughness_limiter/enabled=false
-scaling_3d/mode=1
 scaling_3d/scale=0.25
 scaling_3d/fsr_sharpness=0.0
 environment/glow/upscale_mode=0

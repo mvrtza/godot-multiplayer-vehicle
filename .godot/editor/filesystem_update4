@@ -1,9 +1,11 @@
 res://default_env.tres
 res://multiplayer/multiplayer.tscn
-res://shader/slow_motion_blur.gdshader
-res://Cars/Mesh/base car.tres
-res://shader/chromatic_abberation.gdshader
-res://MISC/scene swapper/scenes/Test Scene/scene.tscn
+res://MAIN/car.gd
 res://multiplayer/client/player/player.tscn
+res://MISC/car swapper/cars/Saipa Pride/scene.tscn
+res://MISC/visual gravity system/vgs.gd
+res://multiplayer/client/client.gd
+res://multiplayer/resoultion.gd
+res://GlobalData/server.gd
+res://MISC/mobile controls/mobile_ctrls.gd
 res://base car.tscn
-res://MAIN/misc/mechanical sounds/other_sounds.tscn

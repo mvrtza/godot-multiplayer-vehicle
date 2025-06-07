@@ -5,6 +5,15 @@ extends Node3D
 
 func _ready() -> void:
 	multiplayer.connected_to_server.connect(create_local_player)
+	multiplayer.connection_failed.connect(
+		func ():
+			var enet_multiplayer_peer = ENetMultiplayerPeer.new()
+			
+			var check: Error = enet_multiplayer_peer.create_client("127.0.0.1", 9001)
+			if check == OK:
+				# Allows the MultiplayerAPI to use this ENetMultiplayerPeer to send/recieve RPCs and synchronizations.
+				multiplayer.multiplayer_peer = enet_multiplayer_peer
+	)
 
 
 func create_local_player() -> void:

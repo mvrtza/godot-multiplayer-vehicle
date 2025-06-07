@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://b7f55o70s0e4c"]
+[gd_scene load_steps=25 format=3 uid="uid://b7f55o70s0e4c"]
 
 [ext_resource type="Script" path="res://multiplayer/server/players.gd" id="1_7ntly"]
 [ext_resource type="Script" path="res://multiplayer/server/server.gd" id="1_ccl0h"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://bidgtgjpxgsgb" path="res://MISC/scene swapper/scenes/RCP Proving Grounds/scene.tscn" id="8_f8vvx"]
 [ext_resource type="Script" path="res://multiplayer/FPS.gd" id="8_fnrjl"]
 [ext_resource type="Script" path="res://multiplayer/resoultion.gd" id="9_81jtn"]
+[ext_resource type="PackedScene" uid="uid://dwnhqfjq7v1pq" path="res://terrain/components/Borders.tscn" id="10_38kcy"]
+[ext_resource type="PackedScene" uid="uid://djhl3foqkj4e2" path="res://terrain/components/Tunnel.tscn" id="11_ccot6"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_fbne0"]
 
@@ -17,9 +19,11 @@ sky_material = SubResource("ProceduralSkyMaterial_fbne0")
 
 [sub_resource type="Environment" id="Environment_f5pef"]
 background_mode = 2
+background_energy_multiplier = 2.51
 sky = SubResource("Sky_xu5cm")
-tonemap_exposure = 0.83
 tonemap_white = 1.84
+fog_light_color = Color(0.517647, 0.552941, 0.584314, 1)
+fog_sky_affect = 0.233
 
 [sub_resource type="GDScript" id="GDScript_mu6fd"]
 script/source = "extends Control
@@ -47,6 +51,9 @@ func set_multiplayer_mode(server_running: bool) -> void:
 		multiplayer_mode.text = \"Client + Server\"
 	else:
 		multiplayer_mode.text = \"Client\"
+
+
+
 
 "
 
@@ -100,10 +107,14 @@ distance_fade_max_distance = 1.0
 material = SubResource("StandardMaterial3D_o1pms")
 size = Vector2(0.05, 0.05)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_oo5gs"]
+size = Vector3(36.745, 1, 32.18)
+
 [node name="Main" type="Node"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+visible = false
 light_color = Color(0.458824, 0.572549, 0.6, 1)
 light_energy = 6.155
 light_indirect_energy = 3.494
@@ -114,8 +125,11 @@ directional_shadow_mode = 0
 environment = SubResource("Environment_f5pef")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Control" type="Control" parent="MarginContainer"]
 layout_mode = 2
@@ -171,7 +185,6 @@ offset_bottom = 40.0
 [node name="SubViewport" type="SubViewport" parent="."]
 own_world_3d = true
 world_3d = SubResource("World3D_wpr7t")
-fsr_sharpness = 0.0
 
 [node name="Server" type="Node" parent="SubViewport"]
 script = ExtResource("1_ccl0h")
@@ -185,6 +198,7 @@ _spawnable_scenes = PackedStringArray("res://multiplayer/server/player/player.ts
 spawn_path = NodePath("..")
 
 [node name="Client" type="Node" parent="."]
+unique_name_in_owner = true
 script = ExtResource("3_hmc42")
 
 [node name="Players" type="Node3D" parent="Client"]
@@ -226,7 +240,7 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -107.0
-offset_top = -40.0
+offset_top = -69.0
 offset_right = 107.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -234,28 +248,11 @@ script = ExtResource("9_81jtn")
 
 [node name="3D" type="HSlider" parent="resoultion"]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -96.0
-offset_top = -16.0
-offset_right = 96.0
-grow_horizontal = 2
-grow_vertical = 0
-min_value = 0.25
-max_value = 2.0
-step = 0.1
-value = 0.25
-
-[node name="sharpness" type="HSlider" parent="resoultion"]
-layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -96.0
-offset_right = 96.0
+offset_left = -116.0
+offset_right = 116.0
 offset_bottom = 16.0
 grow_horizontal = 2
 min_value = 0.25
@@ -263,7 +260,80 @@ max_value = 2.0
 step = 0.1
 value = 0.25
 
+[node name="ip_chenger" type="Control" parent="resoultion"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_right = 16.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="restart" type="Button" parent="resoultion/ip_chenger"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -66.0
+offset_top = -31.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Restart"
+
+[node name="server" type="Control" parent="resoultion/ip_chenger"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -32.0
+offset_right = 173.0
+grow_vertical = 0
+
+[node name="ip" type="TextEdit" parent="resoultion/ip_chenger/server"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -30.0
+offset_right = 125.0
+grow_vertical = 0
+
+[node name="port" type="TextEdit" parent="resoultion/ip_chenger/server"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -47.0
+offset_top = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Borders" parent="." instance=ExtResource("10_38kcy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 512, -3, 512)
+visible = false
+collision_mask = 3
+
+[node name="Tunnel" parent="." instance=ExtResource("11_ccot6")]
+visible = false
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 1.49012e-08, 0, 1, 0, -1.49012e-08, 0, 1, -3.05176e-05, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 342.402, 112.888, 1.51788e-18)
+shape = SubResource("BoxShape3D_oo5gs")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+
 [connection signal="despawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_despawned"]
 [connection signal="spawned" from="Client/Players/PlayerSpawner" to="Client/Players" method="_on_player_spawner_spawned"]
 [connection signal="value_changed" from="resoultion/3D" to="resoultion" method="_on_d_value_changed"]
-[connection signal="value_changed" from="resoultion/sharpness" to="resoultion" method="_on_sharpness_value_changed"]
+[connection signal="pressed" from="resoultion/ip_chenger/restart" to="resoultion" method="_on_restart_pressed"]
+[connection signal="text_changed" from="resoultion/ip_chenger/server/ip" to="resoultion" method="_on_ip_text_changed"]
+[connection signal="text_changed" from="resoultion/ip_chenger/server/port" to="resoultion" method="_on_port_text_changed"]

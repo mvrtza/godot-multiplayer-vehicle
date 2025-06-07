@@ -64,6 +64,7 @@ replication_config = SubResource("SceneReplicationConfig_hj4e4")
 public_visibility = false
 
 [node name="mobile_ctrls" parent="." instance=ExtResource("4_h0463")]
+visible = false
 base_resolution = Vector2(1152, 648)
 
 [node name="debug" parent="." instance=ExtResource("2_wcf22")]
@@ -73,6 +74,7 @@ top_level = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
 script = ExtResource("3_hcff3")
 mobile_controls = NodePath("../mobile_ctrls")
+debugger = NodePath("../debug")
 
 [node name="CPUParticles3D" type="CPUParticles3D" parent="cam_chase"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.42117, -1.50648)
@@ -101,11 +103,8 @@ transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 
 cull_mask = 524287
 doppler_tracking = 2
 current = true
-near = 0.1
-far = 10000.0
 
 [node name="blur" type="ColorRect" parent="cam_chase/orbit/Camera"]
-visible = false
 z_index = -1
 material = SubResource("ShaderMaterial_nxv3v")
 anchors_preset = 15

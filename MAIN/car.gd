@@ -211,6 +211,7 @@ false, # enabled
 @export var BlowRate = 35.0
 @export var SCThreshold = 6.0
 @export var carskinname = 0
+var last_distance = Vector3(0,0,0)
 var rpm = 0.0
 var rpmspeed = 0.0
 var resistancerpm = 0.0
@@ -935,16 +936,16 @@ func aero():
 func _physics_process(delta):
 	if(avaliable_gas>0 && !stop_car):
 		var sync_client_node = get_parent().get_node_or_null('ClientSync')
-		var last_distance = position
-		await get_tree().create_timer(1.0).timeout 
-		var now_distance = position
-		distance_traveled = distance_traveled + last_distance.distance_to(now_distance)*0.000001
-		avaliable_gas = avaliable_gas - last_distance.distance_to(now_distance)*0.000001
-		if $detect_ground.is_colliding():
-			var ground = $detect_ground.get_collider()
-			await get_tree().create_timer(5.0).timeout 
-			if($detect_ground.is_colliding() && ground == $detect_ground.get_collider()):
-				rotation = Vector3(rotation.x,rotation.y,0)
+		distance_traveled += self.global_position.distance_to(last_distance) * 0.000001
+		avaliable_gas -=  self.global_position.distance_to(last_distance)* 0.000001
+		last_distance = self.global_position
+
+#
+		#if $detect_ground.is_colliding():
+			#var ground = $detect_ground.get_collider()
+			#await get_tree().create_timer(5.0).timeout 
+			#if($detect_ground.is_colliding() && ground == $detect_ground.get_collider()):
+				#rotation = Vector3(rotation.x,rotation.y,0)
 		if sync_client_node:
 			if len(steering_angles)>0:
 				max_steering_angle = 0.0
